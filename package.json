@@ -1,0 +1,29 @@
+{
+  "name": "remotion-video-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx remotion studio",
+    "render:presentation": "npx remotion render Presentation out/presentation.mp4",
+    "render:social": "npx remotion render SocialClip out/social-clip.mp4",
+    "render:dashboard": "npx remotion render DataDashboard out/dashboard.mp4",
+    "render:all": "npm run render:presentation && npm run render:social && npm run render:dashboard",
+    "still:presentation": "npx remotion still Presentation out/presentation-thumb.png",
+    "still:dashboard": "npx remotion still DataDashboard out/dashboard-thumb.png"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@remotion/cli": "4.0.441",
+    "@remotion/renderer": "4.0.441",
+    "@remotion/transitions": "4.0.441",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "4.0.441",
+    "typescript": "6.0.2"
+  }
+}
