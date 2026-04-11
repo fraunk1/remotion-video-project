@@ -184,6 +184,23 @@ def main() -> int:
         slides = apply_overrides(slides, overrides_path)
         print(f"Applied overrides from {overrides_path.name}")
 
+    # Preserve existing audio metadata when re-extracting over an existing
+    # scene.json. The voiceover cache keys on slide.audio.content_hash, so if
+    # we wipe it on every run the cache never hits. Match by slide id.
+    if args.output.exists():
+        try:
+            prior = Scene.read(args.output)
+            prior_audio_by_id = {s.id: s.audio for s in prior.slides}
+            preserved = 0
+            for slide in slides:
+                if slide.id in prior_audio_by_id:
+                    slide.audio = prior_audio_by_id[slide.id]
+                    preserved += 1
+            if preserved:
+                print(f"Preserved audio metadata for {preserved} slide(s) from existing scene.json")
+        except Exception as e:
+            print(f"WARN: could not reuse prior scene.json ({e}); starting fresh")
+
     soup = BeautifulSoup(html, "html.parser")
     title_tag = soup.find("title")
     deck_title = (title_tag.get_text(strip=True) if title_tag else "") or (slides[0].title if slides else "Untitled")

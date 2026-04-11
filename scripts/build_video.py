@@ -16,6 +16,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Ensure UTF-8 stdout on Windows (default cp1252 can't encode unicode like U+2192).
+# Safe no-op on macOS/Linux where stdout is already UTF-8.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+    sys.stderr.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+except Exception:
+    pass
+
 # Allow both `python scripts/build_video.py` and `python -m scripts.build_video`
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -26,12 +34,54 @@ def slugify(text: str) -> str:
     return re.sub(r"[\s-]+", "-", s) or "untitled"
 
 
-def run(cmd: list[str], *, cwd: Path) -> None:
+def run(cmd: list[str], *, cwd: Path, extra_env: dict[str, str] | None = None) -> None:
     print(f"  $ {' '.join(cmd)}")
-    result = subprocess.run(cmd, cwd=str(cwd))
+    env = os.environ.copy()
+    env.setdefault("PYTHONIOENCODING", "utf-8")
+    if extra_env:
+        env.update(extra_env)
+    # On Windows, `npx` is a .cmd shim and CreateProcess can't find it without
+    # shell=True. Bare executable names like `npx`/`npm` require shell=True here;
+    # direct Python interpreter paths do not.
+    use_shell = sys.platform == "win32" and cmd and not os.path.isabs(cmd[0])
+    if use_shell:
+        # When shell=True on Windows, pass a single string so cmd.exe resolves
+        # the .cmd extension. Quote args that contain spaces.
+        cmd_str = subprocess.list2cmdline(cmd)
+        result = subprocess.run(cmd_str, cwd=str(cwd), env=env, shell=True)
+    else:
+        result = subprocess.run(cmd, cwd=str(cwd), env=env)
     if result.returncode != 0:
         print(f"ERROR: command failed with exit {result.returncode}", file=sys.stderr)
         sys.exit(result.returncode)
+
+
+def find_tts_site_packages(project_root: Path) -> Path | None:
+    """Locate a sibling venv that has torch/torchaudio/omnivoice installed.
+
+    The TTS stack (~3GB with CUDA) is deliberately NOT duplicated into the
+    remotion-video-project venv. Instead, we piggyback on voiceover-pptx's
+    venv via PYTHONPATH. Both venvs must share the same Python version/ABI.
+    Returns the site-packages path, or None if not found.
+    """
+    candidates = [
+        project_root.parent / "voiceover-pptx" / ".venv" / "Lib" / "site-packages",  # Windows
+        project_root.parent / "voiceover-pptx" / ".venv" / "lib" / "python3.11" / "site-packages",  # *nix
+        project_root.parent / "voiceover-pptx" / ".venv" / "lib" / "python3.12" / "site-packages",
+    ]
+    for sp in candidates:
+        if (sp / "torch").is_dir() and (sp / "omnivoice").is_dir():
+            return sp
+    return None
+
+
+def tts_deps_importable() -> bool:
+    """Return True iff torch, torchaudio, and omnivoice can be imported here."""
+    import importlib.util
+    for mod in ("torch", "torchaudio", "omnivoice"):
+        if importlib.util.find_spec(mod) is None:
+            return False
+    return True
 
 
 def main() -> int:
@@ -82,6 +132,23 @@ def main() -> int:
 
     if not args.skip_voiceover:
         print("[2/3] Generate voiceover")
+        voiceover_env: dict[str, str] = {}
+        if not tts_deps_importable():
+            tts_sp = find_tts_site_packages(project_root)
+            if tts_sp is None:
+                print(
+                    "ERROR: torch/torchaudio/omnivoice not importable and no sibling\n"
+                    "       voiceover-pptx venv found. Install with:\n"
+                    "         pip install torch torchaudio omnivoice\n"
+                    "       or create ../voiceover-pptx/.venv with those deps.",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+            print(f"  (piggybacking TTS stack from {tts_sp})")
+            existing = os.environ.get("PYTHONPATH", "")
+            voiceover_env["PYTHONPATH"] = (
+                f"{tts_sp}{os.pathsep}{existing}" if existing else str(tts_sp)
+            )
         run(
             [
                 sys.executable, "-m", "scripts.generate_voiceover",
@@ -89,6 +156,7 @@ def main() -> int:
                 "--output", str(voiceover_dir),
             ],
             cwd=project_root,
+            extra_env=voiceover_env,
         )
     else:
         print("[2/3] Voiceover: SKIPPED")
