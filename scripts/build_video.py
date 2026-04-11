@@ -94,6 +94,12 @@ def main() -> int:
     parser.add_argument("--still", action="store_true", help="Render a still frame instead of a full video")
     parser.add_argument("--frames", default=None, help="Frame range to render, e.g., 0-150")
     parser.add_argument("--no-open", action="store_true", help="Do not auto-open output after build")
+    parser.add_argument(
+        "--engine",
+        choices=["omnivoice", "xtts"],
+        default="omnivoice",
+        help="TTS engine to use (default: omnivoice)",
+    )
     args = parser.parse_args()
 
     if not args.deck.exists():
@@ -154,6 +160,7 @@ def main() -> int:
                 sys.executable, "-m", "scripts.generate_voiceover",
                 "--scene", str(scene_json),
                 "--output", str(voiceover_dir),
+                "--engine", args.engine,
             ],
             cwd=project_root,
             extra_env=voiceover_env,

@@ -75,14 +75,19 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Generate voiceover MP3s for a scene")
     parser.add_argument("--scene", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path, help="Output directory, e.g., public/voiceover/<name>/")
+    parser.add_argument(
+        "--engine",
+        choices=["omnivoice", "xtts"],
+        default="omnivoice",
+        help="TTS engine to use (default: omnivoice)",
+    )
     args = parser.parse_args()
 
     if not args.scene.exists():
         print(f"ERROR: scene file not found: {args.scene}", file=sys.stderr)
         return 1
 
-    from voiceover_pptx.tts import TTSConfig
-    from voiceover_pptx.tts.omnivoice import OmniVoiceEngine
+    from voiceover_pptx.tts import TTSConfig, get_engine
 
     scene = Scene.read(args.scene)
     args.output.mkdir(parents=True, exist_ok=True)
@@ -93,12 +98,23 @@ def main() -> int:
         output_format="mp3",
         seed=42,
     )
-    engine = OmniVoiceEngine(config)
+    engine = get_engine(args.engine, config)
     if not engine.is_available():
-        print("ERROR: OmniVoice is not installed in this venv. Run the smoke test.", file=sys.stderr)
+        print(
+            f"ERROR: {args.engine} is not installed in this venv. Run the smoke test.",
+            file=sys.stderr,
+        )
         return 1
 
-    model_version = OmniVoiceEngine.model_version()
+    if args.engine == "omnivoice":
+        from voiceover_pptx.tts.omnivoice import OmniVoiceEngine
+        model_version = OmniVoiceEngine.model_version()
+    else:
+        import importlib.metadata
+        try:
+            model_version = f"xtts-{importlib.metadata.version('coqui-tts')}"
+        except Exception:
+            model_version = "xtts-unknown"
     total = len(scene.slides)
     stats = {"cached": 0, "generated": 0, "skipped": 0}
     t_start = time.perf_counter()
@@ -108,7 +124,7 @@ def main() -> int:
         mp3_path = args.output / f"{slug}.mp3"
         content_hash = compute_content_hash(
             text=slide.notes,
-            voice_id=scene.voice.sample_id,
+            voice_id=f"{scene.voice.sample_id}|{args.engine}",
             model_version=model_version,
             seed=config.seed,
         )
