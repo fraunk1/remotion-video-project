@@ -56,23 +56,23 @@ def run(cmd: list[str], *, cwd: Path, extra_env: dict[str, str] | None = None) -
         sys.exit(result.returncode)
 
 
-def find_tts_site_packages(project_root: Path) -> Path | None:
-    """Locate a sibling venv that has torch/torchaudio/omnivoice installed.
+def find_tts_venv(project_root: Path) -> tuple[Path | None, Path | None]:
+    """Locate the sibling voiceover-pptx venv with TTS deps installed.
 
-    The TTS stack (~3GB with CUDA) is deliberately NOT duplicated into the
-    remotion-video-project venv. Instead, we piggyback on voiceover-pptx's
-    venv via PYTHONPATH. Both venvs must share the same Python version/ABI.
-    Returns the site-packages path, or None if not found.
+    Returns (venv_python, voiceover_project_root) or (None, None).
+    Using the venv's own interpreter avoids version conflicts with the
+    host Python's site-packages (torch/torchvision ABI mismatches).
     """
-    candidates = [
-        project_root.parent / "voiceover-pptx" / ".venv" / "Lib" / "site-packages",  # Windows
-        project_root.parent / "voiceover-pptx" / ".venv" / "lib" / "python3.11" / "site-packages",  # *nix
-        project_root.parent / "voiceover-pptx" / ".venv" / "lib" / "python3.12" / "site-packages",
+    voiceover_root = project_root.parent / "voiceover-pptx"
+    # Find the venv's Python interpreter
+    python_candidates = [
+        voiceover_root / ".venv" / "Scripts" / "python.exe",  # Windows
+        voiceover_root / ".venv" / "bin" / "python",           # *nix
     ]
-    for sp in candidates:
-        if (sp / "torch").is_dir() and (sp / "omnivoice").is_dir():
-            return sp
-    return None
+    for py in python_candidates:
+        if py.is_file():
+            return py, voiceover_root
+    return None, None
 
 
 def tts_deps_importable() -> bool:
@@ -139,9 +139,10 @@ def main() -> int:
     if not args.skip_voiceover:
         print("[2/3] Generate voiceover")
         voiceover_env: dict[str, str] = {}
+        python_exe = sys.executable
         if not tts_deps_importable():
-            tts_sp = find_tts_site_packages(project_root)
-            if tts_sp is None:
+            venv_py, voiceover_proj = find_tts_venv(project_root)
+            if venv_py is None:
                 print(
                     "ERROR: torch/torchaudio/omnivoice not importable and no sibling\n"
                     "       voiceover-pptx venv found. Install with:\n"
@@ -150,14 +151,13 @@ def main() -> int:
                     file=sys.stderr,
                 )
                 sys.exit(1)
-            print(f"  (piggybacking TTS stack from {tts_sp})")
-            existing = os.environ.get("PYTHONPATH", "")
-            voiceover_env["PYTHONPATH"] = (
-                f"{tts_sp}{os.pathsep}{existing}" if existing else str(tts_sp)
-            )
+            print(f"  (using venv Python: {venv_py})")
+            python_exe = str(venv_py)
+            # voiceover_pptx source package lives at the project root, not in site-packages
+            voiceover_env["PYTHONPATH"] = str(voiceover_proj)
         run(
             [
-                sys.executable, "-m", "scripts.generate_voiceover",
+                python_exe, "-m", "scripts.generate_voiceover",
                 "--scene", str(scene_json),
                 "--output", str(voiceover_dir),
                 "--engine", args.engine,

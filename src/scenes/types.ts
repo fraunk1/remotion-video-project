@@ -3,7 +3,19 @@
  * Keep these two files in sync.
  */
 
-export type SlideType = "title" | "bullets" | "twoColumn" | "quote" | "closing" | "content";
+// Known slide types used by built-in components. Briefings may register
+// additional types via GenericBriefing's componentRegistry — the `& {}` trick
+// preserves autocomplete on known names while allowing any string.
+export type SlideType =
+  | "title"
+  | "bullets"
+  | "twoColumn"
+  | "quote"
+  | "closing"
+  | "content"
+  | "section_header"
+  | "agenda"
+  | (string & {});
 
 export interface VoiceRef {
   sample_id: string;
@@ -32,6 +44,9 @@ export interface Slide {
   image: string | null;
   notes: string;
   audio: AudioRef;
+  // Per-slide props passed to the registered component for `type`.
+  // GenericBriefing forwards these straight through.
+  props?: Record<string, unknown>;
 }
 
 export interface Scene {

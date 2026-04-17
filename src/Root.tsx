@@ -4,10 +4,16 @@ import { Presentation } from "./compositions/Presentation";
 import { SocialClip } from "./compositions/SocialClip";
 import { DataDashboard } from "./compositions/DataDashboard";
 import { NarratedPresentation } from "./compositions/NarratedPresentation";
+import { ChilesBriefing } from "./compositions/ChilesBriefing";
+import { MedReviewBriefing } from "./compositions/MedReviewBriefing";
+import { AimsaBriefing } from "./compositions/AimsaBriefing";
+import { GenericBriefing } from "./compositions/GenericBriefing";
 import type { Scene } from "./scenes/types";
 
 const MIN_SLIDE_SECONDS = 4;
 const NARRATED_FPS = 30;
+const INTRO_BUFFER_FRAMES = 45;  // must match NarratedPresentation.tsx
+const CHILES_OUTRO_BUFFER_FRAMES = 36; // must match ChilesBriefing.tsx
 
 const loadScene = async (sceneName: string): Promise<Scene> => {
   const url = staticFile(`scenes/${sceneName}.json`);
@@ -18,11 +24,15 @@ const loadScene = async (sceneName: string): Promise<Scene> => {
   return (await resp.json()) as Scene;
 };
 
-const computeNarratedDurationFrames = (scene: Scene, fps: number): number => {
-  const total = scene.slides.reduce((acc, slide) => {
+const computeNarratedDurationFrames = (scene: Scene, fps: number, withOutroBuffer = false): number => {
+  const lastIdx = scene.slides.length - 1;
+  const total = scene.slides.reduce((acc, slide, idx) => {
     const audioSeconds = slide.audio.duration_seconds || 0;
     const slideSeconds = Math.max(audioSeconds, MIN_SLIDE_SECONDS);
-    return acc + Math.max(1, Math.ceil(slideSeconds * fps));
+    let frames = Math.max(1, Math.ceil(slideSeconds * fps));
+    if (idx === 0) frames += INTRO_BUFFER_FRAMES;
+    if (withOutroBuffer && idx === lastIdx) frames += CHILES_OUTRO_BUFFER_FRAMES;
+    return acc + frames;
   }, 0);
   return Math.max(1, total);
 };
@@ -68,6 +78,112 @@ export const Root: React.FC = () => {
         fps={30}
         width={1920}
         height={1080}
+      />
+
+      {/* Chiles v. Salazar — fully-animated React briefing */}
+      <Composition
+        id="ChilesBriefing"
+        component={ChilesBriefing}
+        fps={NARRATED_FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ sceneData: emptyScene }}
+        durationInFrames={1}
+        calculateMetadata={async ({ props }) => {
+          const anyProps = props as unknown as { sceneData?: Scene };
+          try {
+            const scene = await loadScene("chiles");
+            return {
+              durationInFrames: computeNarratedDurationFrames(scene, NARRATED_FPS, true),
+              props: { sceneData: scene } as unknown as typeof props,
+            };
+          } catch (e) {
+            console.warn("ChilesBriefing: could not load scene 'chiles':", e);
+            return { durationInFrames: 1 };
+          }
+        }}
+      />
+
+      {/* MedReview Pitch — fully-animated React briefing */}
+      <Composition
+        id="MedReviewBriefing"
+        component={MedReviewBriefing}
+        fps={NARRATED_FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ sceneData: emptyScene }}
+        durationInFrames={1}
+        calculateMetadata={async ({ props }) => {
+          const anyProps = props as unknown as { sceneData?: Scene };
+          try {
+            const scene = await loadScene("medreview-pitch");
+            return {
+              durationInFrames: computeNarratedDurationFrames(scene, NARRATED_FPS, true),
+              props: { sceneData: scene } as unknown as typeof props,
+            };
+          } catch (e) {
+            console.warn("MedReviewBriefing: could not load scene 'medreview-pitch':", e);
+            return { durationInFrames: 1 };
+          }
+        }}
+      />
+
+      {/* AIMSA Briefing — fully-animated React briefing */}
+      <Composition
+        id="AimsaBriefing"
+        component={AimsaBriefing}
+        fps={NARRATED_FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ sceneData: emptyScene }}
+        durationInFrames={1}
+        calculateMetadata={async ({ props }) => {
+          const anyProps = props as unknown as { sceneData?: Scene };
+          try {
+            const scene = await loadScene("aimsa-briefing");
+            return {
+              durationInFrames: computeNarratedDurationFrames(scene, NARRATED_FPS, true),
+              props: { sceneData: scene } as unknown as typeof props,
+            };
+          } catch (e) {
+            console.warn("AimsaBriefing: could not load scene 'aimsa-briefing':", e);
+            return { durationInFrames: 1 };
+          }
+        }}
+      />
+
+      {/*
+        GenericBriefing — data-driven briefing composition.
+        Render any briefing with:
+          npx remotion render GenericBriefing out/foo.mp4 --props='{"sceneName":"foo"}'
+        Briefings that need custom slide types should create a tiny wrapper
+        composition in compositions/ that passes a componentRegistry prop.
+      */}
+      <Composition
+        id="GenericBriefing"
+        component={GenericBriefing}
+        fps={NARRATED_FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ sceneData: emptyScene }}
+        durationInFrames={1}
+        calculateMetadata={async ({ props }) => {
+          const anyProps = props as unknown as { sceneName?: string; sceneData?: Scene };
+          const sceneName = anyProps.sceneName;
+          if (!sceneName) {
+            return { durationInFrames: 1 };
+          }
+          try {
+            const scene = await loadScene(sceneName);
+            return {
+              durationInFrames: computeNarratedDurationFrames(scene, NARRATED_FPS, true),
+              props: { sceneData: scene } as unknown as typeof props,
+            };
+          } catch (e) {
+            console.warn(`GenericBriefing: could not load scene '${sceneName}':`, e);
+            return { durationInFrames: 1 };
+          }
+        }}
       />
 
       {/* Narrated Presentation — data-driven from scenes/<name>.json */}

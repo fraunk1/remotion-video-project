@@ -9,9 +9,13 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Any, Optional
 
-SlideType = Literal["title", "bullets", "twoColumn", "quote", "closing", "content"]
+# Slide type names are free-form strings. The built-in components recognize
+# "title", "bullets", "twoColumn", "quote", "closing", "content",
+# "section_header", "agenda"; briefings can introduce their own types and
+# register components for them in GenericBriefing's componentRegistry.
+SlideType = str
 
 
 @dataclass
@@ -45,6 +49,8 @@ class Slide:
     image: Optional[str] = None
     notes: str = ""
     audio: AudioRef = field(default_factory=AudioRef)
+    # Per-slide props forwarded to the component registered for this type.
+    props: Optional[dict[str, Any]] = None
 
 
 @dataclass
@@ -84,6 +90,7 @@ class Scene:
                     image=s.get("image"),
                     notes=s.get("notes", ""),
                     audio=AudioRef(**s.get("audio", {})),
+                    props=s.get("props"),
                 )
                 for s in data["slides"]
             ],
