@@ -6,7 +6,6 @@ import { DataDashboard } from "./compositions/DataDashboard";
 import { NarratedPresentation } from "./compositions/NarratedPresentation";
 import { ChilesBriefing } from "./compositions/ChilesBriefing";
 import { MedReviewBriefing } from "./compositions/MedReviewBriefing";
-import { AimsaBriefing } from "./compositions/AimsaBriefing";
 import { GenericBriefing } from "./compositions/GenericBriefing";
 import type { Scene } from "./scenes/types";
 
@@ -128,29 +127,11 @@ export const Root: React.FC = () => {
         }}
       />
 
-      {/* AIMSA Briefing — fully-animated React briefing */}
-      <Composition
-        id="AimsaBriefing"
-        component={AimsaBriefing}
-        fps={NARRATED_FPS}
-        width={1920}
-        height={1080}
-        defaultProps={{ sceneData: emptyScene }}
-        durationInFrames={1}
-        calculateMetadata={async ({ props }) => {
-          const anyProps = props as unknown as { sceneData?: Scene };
-          try {
-            const scene = await loadScene("aimsa-briefing");
-            return {
-              durationInFrames: computeNarratedDurationFrames(scene, NARRATED_FPS, true),
-              props: { sceneData: scene } as unknown as typeof props,
-            };
-          } catch (e) {
-            console.warn("AimsaBriefing: could not load scene 'aimsa-briefing':", e);
-            return { durationInFrames: 1 };
-          }
-        }}
-      />
+      {/*
+        AIMSA now renders through GenericBriefing (see below) — the bespoke
+        AimsaBriefing composition was retired in Phase 4b once the 9 shared
+        lib components reached v19 parity. Scene name is `aimsa`.
+      */}
 
       {/*
         GenericBriefing — data-driven briefing composition.
