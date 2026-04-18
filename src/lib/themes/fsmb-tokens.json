@@ -1,0 +1,85 @@
+{
+  "$schema": "./fsmb-tokens.schema.json",
+  "name": "fsmb-briefings-v1",
+  "description": "Canonical FSMB AI Briefings design tokens. Single source of truth consumed by both the Reveal.js HTML deck (via generated _tokens.css) and the Remotion video components (via imported fsmb-tokens.json). Do NOT hand-edit the generated CSS file or the Remotion copy — edit this file and run scripts/generate_tokens.py.",
+  "colors": {
+    "navy": "#0E2841",
+    "blue": "#189ACF",
+    "blueBright": "#156082",
+    "orange": "#FBAA29",
+    "orangeBright": "#E8870F",
+    "white": "#FFFFFF",
+    "bgSoft": "#F5F7FA",
+    "bgCard": "#FFFFFF",
+    "bgCardAlt": "#FAFBFD",
+    "bgCardTint": "#DEE9F2",
+    "bgCardTintBorder": "#BFD0E1",
+    "bgCardGray": "#EEF0F3",
+    "bgCardGrayBorder": "#C8CCD1",
+    "border": "rgba(14, 40, 65, 0.08)",
+    "borderHover": "rgba(14, 40, 65, 0.22)",
+    "text": "#545859",
+    "textDim": "#A7A8A9",
+    "textBright": "#0E2841",
+    "green": "#15803d",
+    "red": "#c2410c",
+    "cite": "#6b7280"
+  },
+  "font": {
+    "family": "'DM Sans', -apple-system, 'Segoe UI', sans-serif",
+    "mono": "'Fira Code', 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace",
+    "weight": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    }
+  },
+  "sizes": {
+    "h1": 96,
+    "h2": 72,
+    "h3": 32,
+    "eyebrow": 24,
+    "body": 36,
+    "caption": 24,
+    "stat": 160,
+    "statLabel": 28,
+    "cite": 18
+  },
+  "timing": {
+    "introFrames": 14,
+    "staggerFrames": 6,
+    "exitFrames": 10
+  },
+  "shadows": {
+    "card": "0 14px 36px rgba(14, 40, 65, 0.10), 0 2px 8px rgba(14, 40, 65, 0.06)",
+    "cardPop": "0 20px 48px rgba(14, 40, 65, 0.14), 0 3px 10px rgba(14, 40, 65, 0.08)",
+    "subtle": "0 4px 16px rgba(14, 40, 65, 0.06)",
+    "doc": "0 10px 24px rgba(14, 40, 65, 0.20), 0 2px 6px rgba(14, 40, 65, 0.10)"
+  },
+  "slideContainers": {
+    "title": "swoosh-corner",
+    "section_header_blue": "swoosh-blue",
+    "section_header_orange": "swoosh-orange",
+    "content": "watermark",
+    "agenda": "watermark",
+    "icon_row": "watermark",
+    "content_cards": "watermark",
+    "workflow_chevrons": "watermark",
+    "comparative_panels": "watermark",
+    "sources_grid": "watermark",
+    "takeaway_gray_swoosh": "swoosh-gray",
+    "closing": "swoosh-corner"
+  },
+  "slideRegistry": {
+    "title":                { "html": "title.html",                "remotion": "BriefingTitle",              "container": "swoosh-corner" },
+    "agenda":               { "html": "agenda.html",               "remotion": "BriefingAgenda",             "container": "watermark" },
+    "section_header":       { "html": "section_header.html",       "remotion": "BriefingSectionHeader",      "container": "swoosh-blue|swoosh-orange (by color prop)" },
+    "content_cards":        { "html": "content_cards.html",        "remotion": "BriefingContentCards",       "container": "watermark" },
+    "icon_row":             { "html": "icon_row.html",             "remotion": "BriefingIconRow",            "container": "watermark" },
+    "workflow_chevrons":    { "html": "workflow_chevrons.html",    "remotion": "BriefingWorkflowChevrons",   "container": "watermark" },
+    "comparative_panels":   { "html": "comparative_panels.html",   "remotion": "BriefingComparativePanels",  "container": "watermark" },
+    "sources_grid":         { "html": "sources_grid.html",         "remotion": "BriefingSourcesGrid",        "container": "watermark" },
+    "takeaway_gray_swoosh": { "html": "takeaway_gray_swoosh.html", "remotion": "BriefingTakeawayGraySwoosh", "container": "swoosh-gray" }
+  }
+}
