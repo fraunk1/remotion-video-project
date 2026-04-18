@@ -36,10 +36,11 @@ export const BriefingSectionHeader: React.FC<{
 
   return (
     <BriefingContainer
-      background={color === "blue" ? "solid-blue" : "solid-orange"}
+      background={color === "blue" ? "swoosh-blue" : "swoosh-orange"}
       textOnDark
       padding={0}
       theme={theme}
+      logoPath="aimsa-bg/fsmb-logo.png"
     >
       <div
         style={{

@@ -35,6 +35,15 @@ export { BriefingSourcesGrid } from "./BriefingSourcesGrid";
 export type { SourcesGridTile, SourcesGridProps } from "./BriefingSourcesGrid";
 export { BriefingTakeawayGraySwoosh } from "./BriefingTakeawayGraySwoosh";
 export type { TakeawayGraySwooshProps } from "./BriefingTakeawayGraySwoosh";
+export { BriefingAgenda } from "./BriefingAgenda";
+export type { AgendaPillar, AgendaCallout, AgendaProps } from "./BriefingAgenda";
+export { BriefingContentCards } from "./BriefingContentCards";
+export type {
+  ContentCard,
+  ContentCardBullet,
+  ContentCardsCallout,
+  ContentCardsProps,
+} from "./BriefingContentCards";
 export { fsmbTheme, citationStyle } from "./themes/fsmb";
 export type { BriefingTheme } from "./themes/fsmb";
 export { lineIn, revealAt, phaseCrossfade } from "./animations";

@@ -12,6 +12,8 @@ import {
   BriefingComparativePanels,
   BriefingSourcesGrid,
   BriefingTakeawayGraySwoosh,
+  BriefingAgenda,
+  BriefingContentCards,
 } from "../lib";
 
 loadFont();
@@ -107,6 +109,8 @@ const defaultRegistry: Record<string, SlideComponent> = {
   comparative_panels: ({ slide }) => <BriefingComparativePanels slide={slide} />,
   sources_grid: ({ slide }) => <BriefingSourcesGrid slide={slide} />,
   takeaway_gray_swoosh: ({ slide }) => <BriefingTakeawayGraySwoosh slide={slide} />,
+  agenda: ({ slide }) => <BriefingAgenda slide={slide} />,
+  content_cards: ({ slide }) => <BriefingContentCards slide={slide} />,
 };
 
 export type GenericBriefingProps = {
