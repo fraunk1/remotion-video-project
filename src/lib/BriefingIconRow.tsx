@@ -46,21 +46,29 @@ export type IconRowProps = {
   callout?: IconRowCallout;
 };
 
+/**
+ * Board-member figure — Phosphor `Person` icon at fill weight (chosen
+ * after a side-by-side review of bathroom-door / Person regular / Person
+ * bold / UserCircle / PersonArmsSpread on 2026-04-18). Still reads as an
+ * unambiguous standing person (not an avatar-circle) while dropping the
+ * hand-rolled pictogram stylization for an editorial-grade silhouette.
+ *
+ * SVG path inlined from @phosphor-icons/react fill weight (v2.1.1, MIT).
+ * Inlined rather than imported because the Phosphor React package's ESM
+ * exports don't resolve cleanly under Remotion's bundler settings.
+ */
 const PersonIcon: React.FC<{ color: string; size?: number }> = ({
   color,
   size = 130,
 }) => (
   <svg
-    viewBox="0 0 48 80"
+    viewBox="0 0 256 256"
     width={size}
-    height={(size * 80) / 48}
+    height={size}
+    fill={color}
     aria-hidden
   >
-    <circle cx="24" cy="14" r="11" fill={color} />
-    <path
-      d="M 8 30 Q 8 26, 14 26 L 34 26 Q 40 26, 40 30 L 40 55 Q 40 58, 37 58 L 30 58 L 30 76 Q 30 78, 28 78 L 22 78 Q 20 78, 20 76 L 20 58 L 11 58 Q 8 58, 8 55 Z"
-      fill={color}
-    />
+    <path d="M100,36a28,28,0,1,1,28,28A28,28,0,0,1,100,36ZM215.42,140.78l-45.25-51.3a28,28,0,0,0-21-9.48H106.83a28,28,0,0,0-21,9.48l-45.25,51.3a16,16,0,0,0,22.56,22.69L89,142.7l-19.7,74.88a16,16,0,0,0,29.08,13.35L128,180l29.58,51a16,16,0,0,0,29.08-13.35L167,142.7l25.9,20.77a16,16,0,0,0,22.56-22.69Z" />
   </svg>
 );
 
