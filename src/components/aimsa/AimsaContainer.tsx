@@ -86,7 +86,7 @@ export const AimsaContainer: React.FC<{
           paddingTop: padding,
           paddingLeft: padding,
           paddingRight: padding,
-          paddingBottom: background === "watermark" ? 160 : padding,
+          paddingBottom: background === "watermark" ? 210 : padding,
           fontFamily: t.font.family,
           color: textOnDark ? t.colors.white : t.colors.text,
           display: "flex",

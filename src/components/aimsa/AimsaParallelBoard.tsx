@@ -52,14 +52,14 @@ export const AimsaParallelBoard: React.FC = () => {
   const eyebrowP = spring({ frame, fps, config: { damping: 180 } });
   const h2P = spring({ frame: frame - 6, fps, config: { damping: 180 } });
 
-  // Icons pop in sequentially — stagger 10 frames each, starting at frame 20
-  const iconDelays = SEATS.map((_, i) => 20 + i * 10);
+  // Icons pop in sequentially — tighter cascade so all 11 land within ~2s
+  const iconDelays = SEATS.map((_, i) => 16 + i * 5);
 
-  // Legend enters after all icons populate
-  const legendP = spring({ frame: frame - (20 + SEATS.length * 10 + 12), fps, config: { damping: 180 } });
+  // Legend enters just after all icons populate
+  const legendP = spring({ frame: frame - (16 + SEATS.length * 5 + 6), fps, config: { damping: 180 } });
 
-  // Quote reveal — narration mentions exclusive jurisdiction near the end
-  const q1 = spring({ frame: frame - 480, fps, config: { damping: 200 } });
+  // Exclusive-jurisdiction quote — also loads at slide start, just after legend
+  const q1 = spring({ frame: frame - (16 + SEATS.length * 5 + 20), fps, config: { damping: 200 } });
 
   const lineIn = (p: number, d = 24) => ({
     opacity: interpolate(p, [0, 1], [0, 1]),
@@ -181,8 +181,8 @@ export const AimsaParallelBoard: React.FC = () => {
         <div
           style={{
             marginTop: "auto",
-            background: t.colors.bgCardTint,
-            border: `2px solid ${t.colors.bgCardTintBorder}`,
+            background: t.colors.bgCardGray,
+            border: `2px solid ${t.colors.bgCardGrayBorder}`,
             borderLeft: `6px solid ${t.colors.orange}`,
             borderRadius: "0 12px 12px 0",
             padding: "22px 32px",
@@ -219,8 +219,8 @@ const LegendChip: React.FC<{ color: string; count: number; label: string }> = ({
       display: "flex",
       alignItems: "center",
       gap: 12,
-      background: t.colors.bgCardTint,
-      border: `2px solid ${t.colors.bgCardTintBorder}`,
+      background: t.colors.bgCardGray,
+      border: `2px solid ${t.colors.bgCardGrayBorder}`,
       borderRadius: 999,
       padding: "10px 20px",
     }}

@@ -22,7 +22,7 @@ type FDAItem = {
 
 const FDA_LEFT: FDAItem[] = [
   {
-    text: "21st Century Cures § 3060 carve-out keeps much clinical AI deliberately outside FDA reach",
+    text: "21st Century Cures § 3060 carve-out keeps much clinical AI outside FDA reach by statute",
     cite: "Pub. L. No. 114-255 · 21 U.S.C. § 360j(o)",
   },
   {
@@ -138,8 +138,8 @@ export const AimsaFDAGap: React.FC = () => {
         {/* LEFT — FDA reach */}
         <div
           style={{
-            background: t.colors.bgCardTint,
-            border: `2px solid ${t.colors.bgCardTintBorder}`,
+            background: t.colors.bgCardGray,
+            border: `2px solid ${t.colors.bgCardGrayBorder}`,
             borderTop: `6px solid ${t.colors.blue}`,
             borderRadius: 12,
             padding: "24px 28px",
@@ -210,8 +210,8 @@ export const AimsaFDAGap: React.FC = () => {
         {/* RIGHT — what FDA does NOT review */}
         <div
           style={{
-            background: t.colors.bgCardTint,
-            border: `2px solid ${t.colors.bgCardTintBorder}`,
+            background: t.colors.bgCardGray,
+            border: `2px solid ${t.colors.bgCardGrayBorder}`,
             borderTop: `6px solid ${t.colors.orange}`,
             borderRadius: 12,
             padding: "24px 28px",
@@ -290,14 +290,15 @@ export const AimsaFDAGap: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom callout — spring in at frame 980, then subtle end-beat pulse */}
+      {/* Bottom callout — Parallel Board pattern: gray card + orange left-border */}
       <div
         style={{
           marginTop: 22,
-          background: "rgba(251, 170, 41, 0.10)",
+          background: t.colors.bgCardGray,
+          border: `2px solid ${t.colors.bgCardGrayBorder}`,
           borderLeft: `${calloutBorderWidth}px solid ${t.colors.orange}`,
           borderRadius: "0 12px 12px 0",
-          padding: "18px 28px",
+          padding: "22px 32px",
           fontFamily: t.font.family,
           fontSize: 24,
           fontStyle: "italic",
@@ -308,7 +309,7 @@ export const AimsaFDAGap: React.FC = () => {
           transformOrigin: "left center",
         }}
       >
-        AIMSA exploits the federal-state gap — then routes the resulting authority
+        AIMSA builds on the federal-state gap — then routes the resulting authority
         away from the existing boards into a new, sandbox-friendly forum.
       </div>
     </AimsaContainer>

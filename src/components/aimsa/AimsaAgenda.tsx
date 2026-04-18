@@ -30,48 +30,6 @@ const PILLARS = [
   },
 ];
 
-// Timeline ticker — past / now / future arc that frames where AIMSA sits.
-type TimelineStop = {
-  label: string;
-  period: string;
-  color: string;
-  items: string[];
-  isNow?: boolean;
-};
-const TIMELINE: TimelineStop[] = [
-  {
-    label: "Past",
-    period: "2024–2025",
-    color: t.colors.textDim,
-    items: [
-      "Utah Doctronic sandbox precedent",
-      "California AB 489 signed (Oct 2025)",
-      "Cicero homelessness template: 15 states, 8 passed",
-    ],
-  },
-  {
-    label: "Now",
-    period: "Apr 2026",
-    color: t.colors.orange,
-    isNow: true,
-    items: [
-      "Cicero AIMSA model bill (Jan 2026)",
-      "Idaho HB 945 · Iowa HSB 766",
-      "FSMB analysis · this briefing",
-    ],
-  },
-  {
-    label: "Future",
-    period: "12–18 months",
-    color: t.colors.blue,
-    items: [
-      "8–15 more state introductions expected",
-      "Reciprocity cascade after 5–7 adoptions",
-      "FSMB position + member-board response",
-    ],
-  },
-];
-
 export const AimsaAgenda: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -82,7 +40,7 @@ export const AimsaAgenda: React.FC = () => {
     transform: `translateY(${interpolate(p, [0, 1], [24, 0])}px)`,
   });
 
-  const tickerP = spring({ frame: frame - 80, fps, config: { damping: 180 } });
+  const calloutP = spring({ frame: frame - 60, fps, config: { damping: 200 } });
 
   return (
     <AimsaContainer background="watermark">
@@ -113,13 +71,13 @@ export const AimsaAgenda: React.FC = () => {
         Agenda
       </div>
 
-      {/* 4 pillar cards — text-only, shorter, tinted bg */}
+      {/* 4 pillar cards — the agenda itself */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
           gap: 24,
-          marginTop: 40,
+          marginTop: 48,
         }}
       >
         {PILLARS.map((p, i) => {
@@ -132,11 +90,11 @@ export const AimsaAgenda: React.FC = () => {
             <div
               key={p.num}
               style={{
-                background: t.colors.bgCardTint,
-                border: `2px solid ${t.colors.bgCardTintBorder}`,
+                background: t.colors.bgCardGray,
+                border: `2px solid ${t.colors.bgCardGrayBorder}`,
                 borderTop: `6px solid ${p.color}`,
                 borderRadius: 14,
-                padding: "26px 26px",
+                padding: "28px 26px",
                 boxShadow: t.shadows.card,
                 display: "flex",
                 flexDirection: "column",
@@ -148,7 +106,7 @@ export const AimsaAgenda: React.FC = () => {
               <div
                 style={{
                   fontFamily: t.font.family,
-                  fontSize: 96,
+                  fontSize: 102,
                   fontWeight: t.font.weight.bold,
                   color: p.color,
                   lineHeight: 1,
@@ -173,10 +131,10 @@ export const AimsaAgenda: React.FC = () => {
               <div
                 style={{
                   fontFamily: t.font.family,
-                  fontSize: 24,
+                  fontSize: 22,
                   color: t.colors.text,
-                  marginTop: 12,
-                  lineHeight: 1.4,
+                  marginTop: 14,
+                  lineHeight: 1.45,
                 }}
               >
                 {p.desc}
@@ -186,211 +144,57 @@ export const AimsaAgenda: React.FC = () => {
         })}
       </div>
 
-      {/* Timeline ticker — past / now / future arc */}
+      {/* Single key-facts callout — Parallel Board pattern: gray card +
+          orange left-border (NOT orange-tinted bg). */}
       <div
         style={{
-          marginTop: 36,
-          flex: 1,
+          marginTop: "auto",
+          marginBottom: 8,
+          background: t.colors.bgCardGray,
+          border: `2px solid ${t.colors.bgCardGrayBorder}`,
+          borderLeft: `6px solid ${t.colors.orange}`,
+          borderRadius: "0 14px 14px 0",
+          padding: "22px 32px",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          opacity: interpolate(tickerP, [0, 1], [0, 1]),
-          transform: `translateY(${interpolate(tickerP, [0, 1], [16, 0])}px)`,
+          alignItems: "center",
+          gap: 26,
+          opacity: interpolate(calloutP, [0, 1], [0, 1]),
+          transform: `translateY(${interpolate(calloutP, [0, 1], [12, 0])}px)`,
         }}
       >
-        {/* Header band */}
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            marginBottom: 22,
+            flex: "0 0 auto",
+            fontFamily: t.font.family,
+            fontSize: 18,
+            fontWeight: t.font.weight.bold,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            whiteSpace: "nowrap",
+            backgroundImage: `linear-gradient(90deg, ${t.colors.orange} 0%, ${t.colors.orange} 35%, #DEE9F2 50%, ${t.colors.orange} 65%, ${t.colors.orange} 100%)`,
+            backgroundSize: "300% 100%",
+            backgroundPosition: `${((frame % 120) / 120) * -300}% 50%`,
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+            willChange: "background-position",
           }}
         >
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: 999,
-              background: t.colors.orange,
-              boxShadow: `0 0 0 4px ${t.colors.orange}33`,
-            }}
-          />
-          <div
-            style={{
-              fontFamily: t.font.family,
-              fontSize: 19,
-              fontWeight: t.font.weight.bold,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: t.colors.orange,
-            }}
-          >
-            Where We Are in the Story
-          </div>
-          <div style={{ flex: 1, height: 1, background: t.colors.bgCardTintBorder }} />
+          Why This Briefing Now
         </div>
-
-        {/* Timeline: 3 stops connected by a horizontal line */}
-        <div style={{ position: "relative", padding: "0 40px" }}>
-          {/* Connecting line behind the markers */}
-          <div
-            style={{
-              position: "absolute",
-              top: 22,
-              left: "calc(16.67% + 8px)",
-              right: "calc(16.67% + 8px)",
-              height: 3,
-              background: `linear-gradient(90deg, ${t.colors.textDim} 0%, ${t.colors.orange} 50%, ${t.colors.blue} 100%)`,
-              borderRadius: 2,
-              opacity: 0.55,
-            }}
-          />
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: 32,
-              position: "relative",
-            }}
-          >
-            {TIMELINE.map((stop, i) => {
-              const sp = spring({ frame: frame - 100 - i * 18, fps, config: { damping: 180 } });
-              return (
-                <div
-                  key={stop.label}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    opacity: interpolate(sp, [0, 1], [0, 1]),
-                    transform: `translateY(${interpolate(sp, [0, 1], [16, 0])}px)`,
-                  }}
-                >
-                  {/* Marker dot */}
-                  <div
-                    style={{
-                      width: stop.isNow ? 46 : 36,
-                      height: stop.isNow ? 46 : 36,
-                      borderRadius: 999,
-                      background: stop.color,
-                      border: `4px solid ${t.colors.bgSoft}`,
-                      boxShadow: stop.isNow
-                        ? `0 0 0 5px ${stop.color}33, 0 4px 12px rgba(14, 40, 65, 0.18)`
-                        : `0 2px 6px rgba(14, 40, 65, 0.18)`,
-                      marginBottom: 12,
-                      zIndex: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {stop.isNow && (
-                      <div
-                        style={{
-                          width: 14,
-                          height: 14,
-                          borderRadius: 999,
-                          background: t.colors.white,
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  {/* Label */}
-                  <div
-                    style={{
-                      fontFamily: t.font.family,
-                      fontSize: 24,
-                      fontWeight: t.font.weight.bold,
-                      color: stop.color,
-                      letterSpacing: "0.06em",
-                      textTransform: "uppercase",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {stop.label}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: t.font.family,
-                      fontSize: 19,
-                      fontWeight: t.font.weight.medium,
-                      color: t.colors.textDim,
-                      letterSpacing: "0.04em",
-                      marginTop: 4,
-                      marginBottom: 14,
-                    }}
-                  >
-                    {stop.period}
-                  </div>
-
-                  {/* Items list */}
-                  <div
-                    style={{
-                      width: "100%",
-                      background: t.colors.bgCardTint,
-                      border: `2px solid ${t.colors.bgCardTintBorder}`,
-                      borderLeft: `4px solid ${stop.color}`,
-                      borderRadius: 10,
-                      padding: "14px 18px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 8,
-                    }}
-                  >
-                    {stop.items.map((it, ii) => (
-                      <div
-                        key={ii}
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: 10,
-                          fontFamily: t.font.family,
-                          fontSize: 19,
-                          color: t.colors.text,
-                          lineHeight: 1.35,
-                        }}
-                      >
-                        <span
-                          style={{
-                            flex: "0 0 auto",
-                            width: 5,
-                            height: 5,
-                            borderRadius: 999,
-                            background: stop.color,
-                            marginTop: 7,
-                          }}
-                        />
-                        <span>{it}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* "We are here" tag for now — gentle continuous bob to
-                      draw the eye to the current position on the timeline */}
-                  {stop.isNow && (
-                    <div
-                      style={{
-                        marginTop: 10,
-                        fontFamily: t.font.family,
-                        fontSize: 19,
-                        fontWeight: t.font.weight.bold,
-                        letterSpacing: "0.18em",
-                        textTransform: "uppercase",
-                        color: stop.color,
-                        transform: `translateY(${Math.sin((frame - 80) / 9) * 6}px)`,
-                        willChange: "transform",
-                      }}
-                    >
-                      ▲ We are here
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+        <div
+          style={{
+            flex: 1,
+            fontFamily: t.font.family,
+            fontSize: 24,
+            fontStyle: "italic",
+            fontWeight: t.font.weight.medium,
+            color: t.colors.textBright,
+            lineHeight: 1.45,
+          }}
+        >
+          Cicero model released January 2026 · Idaho HB 945 and Iowa HSB 766 introduced ·
+          expect 8–15 more state introductions over 12–18 months.
         </div>
       </div>
     </AimsaContainer>

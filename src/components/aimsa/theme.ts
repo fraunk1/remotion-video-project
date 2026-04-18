@@ -16,11 +16,13 @@ export const aimsaTheme = {
 
     // Neutrals
     white: "#FFFFFF",
-    bgSoft: "#FFFFFF",
+    bgSoft: "#F5F7FA",                 // soft gray page bg — cards + overall brightness both benefit
     bgCard: "#FFFFFF",
     bgCardAlt: "#FAFBFD",
     bgCardTint: "#DEE9F2",             // visible light-blue tint to contrast against white page
     bgCardTintBorder: "#BFD0E1",       // matching border for tinted cards
+    bgCardGray: "#EEF0F3",             // neutral gray tint — pair with soft page bg for visible card edges
+    bgCardGrayBorder: "#C8CCD1",       // matching border for gray cards
     border: "rgba(14, 40, 65, 0.08)",
     borderHover: "rgba(14, 40, 65, 0.22)",
 

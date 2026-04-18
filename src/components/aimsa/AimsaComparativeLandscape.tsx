@@ -24,11 +24,11 @@ const PRESERVING: BulletItem[] = [
   {
     title: "Texas SB 1188 + HB 149",
     body: "TMB retains discipline; AI sandbox sits under the Texas AI Council",
-    cite: "Holland & Knight · TX AI Laws (2025)",
+    cite: "TX Legislature · SB 1188 (2025)",
   },
   {
     title: "Utah Doctronic",
-    body: "Narrow refill pilot under Office of AI Policy + existing physician oversight",
+    body: "Single-company narrow pilot routed through Office of AI Policy; not a licensing framework",
     cite: "commerce.utah.gov/ai/agreements/doctronic/",
   },
   {
@@ -67,11 +67,9 @@ export const AimsaComparativeLandscape: React.FC = () => {
 
   const eyebrowP = spring({ frame, fps, config: { damping: 180 } });
   const h2P = spring({ frame: frame - 6, fps, config: { damping: 180 } });
-  // LEFT panel + items load first (all in by ~3.7s).
-  // RIGHT panel + items load shortly after (~6.7s) so the viewer can absorb
-  // the comparison without a long dead gap. Per Frank's pacing note.
-  const leftP = spring({ frame: frame - 16, fps, config: { damping: 180 } });
-  const rightP = spring({ frame: frame - 180, fps, config: { damping: 180 } });
+  // Both panels enter at slide start. All items settle in ~1.5s.
+  const leftP = spring({ frame: frame - 14, fps, config: { damping: 180 } });
+  const rightP = spring({ frame: frame - 22, fps, config: { damping: 180 } });
 
   const lineIn = (p: number, d = 24) => ({
     opacity: interpolate(p, [0, 1], [0, 1]),
@@ -87,13 +85,16 @@ export const AimsaComparativeLandscape: React.FC = () => {
     panelP: number;
     itemBaseDelay: number;
     bulletDirection: -12 | 12;
+    tint: "blue" | "gray";
   }) => {
-    const { items, accent, eyebrow, headerBand, title, panelP, itemBaseDelay, bulletDirection } = opts;
+    const { items, accent, eyebrow, headerBand, title, panelP, itemBaseDelay, bulletDirection, tint } = opts;
+    const panelBg = t.colors.bgCardGray;
+    const panelBorder = t.colors.bgCardGrayBorder;
     return (
       <div
         style={{
-          background: t.colors.bgCardTint,
-          border: `2px solid ${t.colors.bgCardTintBorder}`,
+          background: panelBg,
+          border: `2px solid ${panelBorder}`,
           borderTop: `6px solid ${accent}`,
           borderRadius: 12,
           padding: "26px 28px",
@@ -110,7 +111,7 @@ export const AimsaComparativeLandscape: React.FC = () => {
             display: "flex",
             alignItems: "baseline",
             gap: 14,
-            borderBottom: `1px solid ${t.colors.bgCardTintBorder}`,
+            borderBottom: `1px solid ${panelBorder}`,
             paddingBottom: 14,
             marginBottom: 18,
           }}
@@ -249,8 +250,9 @@ export const AimsaComparativeLandscape: React.FC = () => {
           headerBand: { stat: "4", label: "States Preserving\nBoard Authority" },
           title: "Preserve Existing Boards",
           panelP: leftP,
-          itemBaseDelay: 40,
+          itemBaseDelay: 20,
           bulletDirection: -12,
+          tint: "blue",
         })}
         {renderPanel({
           items: BYPASSING,
@@ -259,8 +261,9 @@ export const AimsaComparativeLandscape: React.FC = () => {
           headerBand: { stat: "1", label: "Model Bill\nBypassing" },
           title: "The Only Approach That Bypasses",
           panelP: rightP,
-          itemBaseDelay: 200,
+          itemBaseDelay: 30,
           bulletDirection: 12,
+          tint: "gray",
         })}
       </div>
     </AimsaContainer>

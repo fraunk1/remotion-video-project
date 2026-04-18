@@ -66,7 +66,7 @@ const renderSlide = (slideId: string): React.ReactElement => {
         <AimsaSectionHeader
           partLabel="Part IV"
           title="What This Means"
-          subtitle="The comparative landscape, the FDA limits, and the FSMB response"
+          subtitle="The comparative landscape, the FDA limits, and considerations for FSMB"
           color="orange"
         />
       );
@@ -101,7 +101,7 @@ export const AimsaBriefing: React.FC<AimsaBriefingProps> = ({ sceneData }) => {
   });
 
   return (
-    <AbsoluteFill style={{ background: "#FFFFFF" }}>
+    <AbsoluteFill style={{ background: "#F5F7FA" }}>
       {ranges.map(({ slide, startFrame, durationInFrames }, idx) => (
         <Sequence key={slide.id} from={startFrame} durationInFrames={durationInFrames}>
           {renderSlide(slide.id)}

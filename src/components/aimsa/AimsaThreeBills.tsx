@@ -68,11 +68,10 @@ export const AimsaThreeBills: React.FC = () => {
     transform: `translateY(${interpolate(p, [0, 1], [d, 0])}px)`,
   });
 
-  // Sequential card reveal — each with its own spring delay.
-  const cardDelays = [10, 150, 280];
-  // Bottom adoption-pattern chip strip — narration mentions multi-state
-  // pattern around frame 480 (16s into the slide).
-  const stripP = spring({ frame: frame - 480, fps, config: { damping: 200 } });
+  // Sequential card reveal — all three enter in the first ~1s of the slide.
+  const cardDelays = [10, 22, 34];
+  // Bottom adoption-pattern chip strip — also enters at slide start.
+  const stripP = spring({ frame: frame - 46, fps, config: { damping: 200 } });
 
   return (
     <AimsaContainer background="watermark">
@@ -100,7 +99,7 @@ export const AimsaThreeBills: React.FC = () => {
           ...lineIn(h2P),
         }}
       >
-        Three Bills, One Architecture
+        One Architecture, Two State Bills
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20, marginTop: 24, flex: 1, minHeight: 0 }}>
@@ -114,8 +113,8 @@ export const AimsaThreeBills: React.FC = () => {
             <div
               key={bill.name}
               style={{
-                background: t.colors.bgCardTint,
-                border: `2px solid ${t.colors.bgCardTintBorder}`,
+                background: t.colors.bgCardGray,
+                border: `2px solid ${t.colors.bgCardGrayBorder}`,
                 borderTop: `6px solid ${bill.color}`,
                 borderRadius: 14,
                 padding: "20px 22px",
@@ -202,7 +201,7 @@ export const AimsaThreeBills: React.FC = () => {
                   width: "100%",
                   marginTop: "auto",
                   paddingTop: 8,
-                  borderTop: `1px dashed ${t.colors.bgCardTintBorder}`,
+                  borderTop: `1px dashed ${t.colors.bgCardGrayBorder}`,
                   textAlign: "center",
                 }}
               >
@@ -213,64 +212,49 @@ export const AimsaThreeBills: React.FC = () => {
         })}
       </div>
 
-      {/* Bottom adoption-pattern chip strip — fills whitespace with substance */}
+      {/* Cicero track-record callout — Parallel Board pattern: gray card +
+          orange left-border (NOT orange-tinted bg). */}
       <div
         style={{
-          marginTop: 16,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "stretch",
-          gap: 12,
+          marginTop: 20,
+          background: t.colors.bgCardGray,
+          border: `2px solid ${t.colors.bgCardGrayBorder}`,
+          borderLeft: `6px solid ${t.colors.orange}`,
+          borderRadius: "0 12px 12px 0",
+          padding: "18px 28px",
+          fontFamily: t.font.family,
+          fontSize: 22,
+          fontStyle: "italic",
+          fontWeight: t.font.weight.medium,
+          color: t.colors.textBright,
+          lineHeight: 1.45,
           opacity: interpolate(stripP, [0, 1], [0, 1]),
-          transform: `translateY(${interpolate(stripP, [0, 1], [16, 0])}px)`,
+          transform: `translateY(${interpolate(stripP, [0, 1], [8, 0])}px)`,
         }}
       >
-        <AdoptionChip label="Model bill released" value="January 2026" accent={t.colors.navy} />
-        <AdoptionChip label="States introduced" value="Idaho · Iowa" accent={t.colors.blue} />
-        <AdoptionChip label="Cicero track record" value="15 introduced → 8 passed" accent={t.colors.orange} />
-        <AdoptionChip label="Reciprocity mechanism" value="Built into every bill" accent="#C98A2B" />
+        <span
+          style={{
+            display: "inline-block",
+            fontSize: 18,
+            fontWeight: t.font.weight.bold,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            fontStyle: "normal",
+            marginRight: 16,
+            verticalAlign: "middle",
+            backgroundImage: `linear-gradient(90deg, ${t.colors.orange} 0%, ${t.colors.orange} 35%, #DEE9F2 50%, ${t.colors.orange} 65%, ${t.colors.orange} 100%)`,
+            backgroundSize: "300% 100%",
+            backgroundPosition: `${((frame % 120) / 120) * -300}% 50%`,
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+            willChange: "background-position",
+          }}
+        >
+          Cicero Track Record
+        </span>
+        Homelessness model bill introduced in 15 states, passed in 8 — AIMSA on the same trajectory.
       </div>
     </AimsaContainer>
   );
 };
-
-const AdoptionChip: React.FC<{ label: string; value: string; accent: string }> = ({ label, value, accent }) => (
-  <div
-    style={{
-      flex: 1,
-      background: t.colors.bgCardTint,
-      border: `2px solid ${t.colors.bgCardTintBorder}`,
-      borderLeft: `4px solid ${accent}`,
-      borderRadius: 10,
-      padding: "10px 14px",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-    }}
-  >
-    <div
-      style={{
-        fontFamily: t.font.family,
-        fontSize: 14,
-        fontWeight: t.font.weight.bold,
-        letterSpacing: "0.14em",
-        textTransform: "uppercase",
-        color: accent,
-        marginBottom: 4,
-      }}
-    >
-      {label}
-    </div>
-    <div
-      style={{
-        fontFamily: t.font.family,
-        fontSize: 19,
-        fontWeight: t.font.weight.semibold,
-        color: t.colors.navy,
-        lineHeight: 1.2,
-      }}
-    >
-      {value}
-    </div>
-  </div>
-);

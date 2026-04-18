@@ -7,6 +7,11 @@ import {
   BriefingSectionHeader,
   BriefingClosing,
   BriefingContent,
+  BriefingIconRow,
+  BriefingWorkflowChevrons,
+  BriefingComparativePanels,
+  BriefingSourcesGrid,
+  BriefingTakeawayGraySwoosh,
 } from "../lib";
 
 loadFont();
@@ -97,6 +102,11 @@ const defaultRegistry: Record<string, SlideComponent> = {
       />
     );
   },
+  icon_row: ({ slide }) => <BriefingIconRow slide={slide} />,
+  workflow_chevrons: ({ slide }) => <BriefingWorkflowChevrons slide={slide} />,
+  comparative_panels: ({ slide }) => <BriefingComparativePanels slide={slide} />,
+  sources_grid: ({ slide }) => <BriefingSourcesGrid slide={slide} />,
+  takeaway_gray_swoosh: ({ slide }) => <BriefingTakeawayGraySwoosh slide={slide} />,
 };
 
 export type GenericBriefingProps = {

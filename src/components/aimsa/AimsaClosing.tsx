@@ -180,12 +180,16 @@ const Phase1SourcesGrid: React.FC<{ frame: number; fps: number; opacity: number 
             fps,
             config: { damping: 16, mass: 0.7 },
           });
+          // Row 2 has only 3 tiles for 7 total. Push them right so column 1
+          // of row 2 stays empty — keeps the FSMB logo (bottom-left) clear.
+          const gridColumnStart = i === 4 ? 2 : undefined;
           return (
             <div
               key={src.url}
               style={{
-                background: t.colors.bgCardTint,
-                border: `2px solid ${t.colors.bgCardTintBorder}`,
+                gridColumnStart,
+                background: t.colors.bgCardGray,
+                border: `2px solid ${t.colors.bgCardGrayBorder}`,
                 borderRadius: 12,
                 boxShadow: t.shadows.card,
                 overflow: "hidden",
@@ -206,7 +210,7 @@ const Phase1SourcesGrid: React.FC<{ frame: number; fps: number; opacity: number 
                   overflow: "hidden",
                   position: "relative",
                   background: t.colors.bgSoft,
-                  borderBottom: `1px solid ${t.colors.bgCardTintBorder}`,
+                  borderBottom: `1px solid ${t.colors.bgCardGrayBorder}`,
                 }}
               >
                 <Img
@@ -224,7 +228,7 @@ const Phase1SourcesGrid: React.FC<{ frame: number; fps: number; opacity: number 
               <div
                 style={{
                   flex: "1 1 auto",
-                  background: t.colors.bgCardTint,
+                  background: t.colors.bgCardGray,
                   padding: "12px 14px",
                   display: "flex",
                   flexDirection: "column",

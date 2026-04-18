@@ -1,10 +1,12 @@
 /**
  * FSMB brand theme — colors, DM Sans typography, card shadows.
  *
- * This is the default theme for briefing videos. Extracted from the Chiles
- * briefing (components/chiles/theme.ts) so new briefings inherit the same
- * FSMB look without copying files.
+ * This is the default theme for briefing videos. Mirrors AIMSA + Chiles
+ * theme files so the library components and bespoke components render
+ * against a single palette.
  */
+
+import type React from "react";
 
 export const fsmbTheme = {
   colors: {
@@ -17,9 +19,13 @@ export const fsmbTheme = {
 
     // Neutrals
     white: "#FFFFFF",
-    bgSoft: "#F1F4F8",
+    bgSoft: "#F5F7FA",                 // soft gray page bg
     bgCard: "#FFFFFF",
     bgCardAlt: "#FAFBFD",
+    bgCardTint: "#DEE9F2",             // light-blue tint for contrast against white pages
+    bgCardTintBorder: "#BFD0E1",
+    bgCardGray: "#EEF0F3",             // default content-slide card bg
+    bgCardGrayBorder: "#C8CCD1",       // matching border for gray cards
     border: "rgba(14, 40, 65, 0.08)",
     borderHover: "rgba(14, 40, 65, 0.22)",
 
@@ -31,9 +37,13 @@ export const fsmbTheme = {
     // Semantic
     green: "#15803d",
     red: "#c2410c",
+
+    // Mono / citation
+    cite: "#6b7280",
   },
   font: {
     family: '"DM Sans", -apple-system, "Segoe UI", sans-serif',
+    mono: '"Fira Code", "JetBrains Mono", "SFMono-Regular", Consolas, monospace',
     weight: {
       regular: 400,
       medium: 500,
@@ -50,6 +60,7 @@ export const fsmbTheme = {
     caption: 24,
     stat: 160,
     statLabel: 28,
+    cite: 18,
   },
   timing: {
     introFrames: 14,
@@ -60,7 +71,27 @@ export const fsmbTheme = {
     card: "0 14px 36px rgba(14, 40, 65, 0.10), 0 2px 8px rgba(14, 40, 65, 0.06)",
     cardPop: "0 20px 48px rgba(14, 40, 65, 0.14), 0 3px 10px rgba(14, 40, 65, 0.08)",
     subtle: "0 4px 16px rgba(14, 40, 65, 0.06)",
+    doc: "0 10px 24px rgba(14, 40, 65, 0.20), 0 2px 6px rgba(14, 40, 65, 0.10)",
   },
 } as const;
 
 export type BriefingTheme = typeof fsmbTheme;
+
+/**
+ * Shared citation/hyperlink style — monospace + blue-underline treatment.
+ * Apply to every citation URL across slides to signal linkable intent.
+ */
+export const citationStyle: React.CSSProperties = {
+  fontFamily: "ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace",
+  fontSize: 14,
+  color: fsmbTheme.colors.blue,
+  textDecoration: "underline",
+  textDecorationColor: "rgba(24, 154, 207, 0.45)",
+  textDecorationThickness: 1,
+  textUnderlineOffset: 3,
+  letterSpacing: "0.01em",
+  marginTop: 6,
+  display: "block",
+  wordBreak: "break-all",
+  lineHeight: 1.4,
+};

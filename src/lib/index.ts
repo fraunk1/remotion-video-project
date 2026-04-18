@@ -7,10 +7,34 @@
  */
 
 export { BriefingContainer } from "./BriefingContainer";
-export type { BriefingBackground } from "./BriefingContainer";
+export type { BriefingBackground, SwooshAssets } from "./BriefingContainer";
 export { BriefingSectionHeader } from "./BriefingSectionHeader";
 export { BriefingTitle } from "./BriefingTitle";
 export { BriefingClosing } from "./BriefingClosing";
 export { BriefingContent } from "./BriefingContent";
-export { fsmbTheme } from "./themes/fsmb";
+export { BriefingIconRow } from "./BriefingIconRow";
+export type {
+  IconRowIcon,
+  IconRowLegendChip,
+  IconRowCallout,
+  IconRowProps,
+} from "./BriefingIconRow";
+export { BriefingWorkflowChevrons } from "./BriefingWorkflowChevrons";
+export type {
+  ChevronItem,
+  ChevronPhase,
+  WorkflowChevronsProps,
+} from "./BriefingWorkflowChevrons";
+export { BriefingComparativePanels } from "./BriefingComparativePanels";
+export type {
+  ComparativePanel,
+  ComparativePanelItem,
+  ComparativePanelsProps,
+} from "./BriefingComparativePanels";
+export { BriefingSourcesGrid } from "./BriefingSourcesGrid";
+export type { SourcesGridTile, SourcesGridProps } from "./BriefingSourcesGrid";
+export { BriefingTakeawayGraySwoosh } from "./BriefingTakeawayGraySwoosh";
+export type { TakeawayGraySwooshProps } from "./BriefingTakeawayGraySwoosh";
+export { fsmbTheme, citationStyle } from "./themes/fsmb";
 export type { BriefingTheme } from "./themes/fsmb";
+export { lineIn, revealAt, phaseCrossfade } from "./animations";
