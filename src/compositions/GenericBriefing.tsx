@@ -16,7 +16,7 @@ import {
   BriefingContentCards,
 } from "../lib";
 
-loadFont();
+loadFont();   // DM Sans — body / UI / headlines / numerals (FSMB brand font)
 
 const MIN_SLIDE_SECONDS = 3;
 const INTRO_BUFFER_FRAMES = 30;

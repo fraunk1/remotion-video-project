@@ -43,6 +43,16 @@ export type ContentCard = {
 export type ContentCardsCallout = {
   label?: string;
   text: string;
+  /** Optional dot-plot visualization rendered inline with the callout.
+   * Useful for "N of M" ratio facts (e.g., "8 of 15 states passed"). */
+  dotPlot?: {
+    filled: number;
+    total: number;
+    /** Color of filled dots (defaults to the callout's accent color). */
+    fillColor?: string;
+    /** Label shown above the dots, e.g. "8 of 15 states". */
+    caption?: string;
+  };
 };
 
 export type ContentCardsProps = {
@@ -427,6 +437,16 @@ export const BriefingContentCards: React.FC<{ slide: Slide }> = ({ slide }) => {
               {callout.label}
             </div>
           )}
+          {callout.dotPlot && (
+            <DotPlotRow
+              filled={callout.dotPlot.filled}
+              total={callout.dotPlot.total}
+              fillColor={callout.dotPlot.fillColor ?? t.colors.orange}
+              caption={callout.dotPlot.caption}
+              frame={frame}
+              fps={fps}
+            />
+          )}
           <div
             style={{
               flex: 1,
@@ -442,5 +462,83 @@ export const BriefingContentCards: React.FC<{ slide: Slide }> = ({ slide }) => {
         </div>
       )}
     </BriefingContainer>
+  );
+};
+
+/**
+ * Inline N-of-M dot-plot — used inside a ContentCardsCallout to turn a
+ * "filled / total" ratio (e.g., "8 of 15 states passed") into a visible
+ * proof bar. Filled dots reveal one-by-one over ~1s, drawing the viewer's
+ * eye across the ratio.
+ */
+const DotPlotRow: React.FC<{
+  filled: number;
+  total: number;
+  fillColor: string;
+  caption?: string;
+  frame: number;
+  fps: number;
+}> = ({ filled, total, fillColor, caption, frame, fps }) => {
+  const t = fsmbTheme;
+  // Reveal each dot 4 frames apart, starting at callout reveal + 10 frames
+  const startFrame = 70;
+  const perDot = 4;
+  return (
+    <div
+      style={{
+        flex: "0 0 auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        alignItems: "center",
+        paddingRight: 14,
+        borderRight: `1px solid ${t.colors.bgCardGrayBorder}`,
+        marginRight: 8,
+      }}
+    >
+      {caption && (
+        <div
+          style={{
+            fontFamily: t.font.family,
+            fontSize: 14,
+            fontWeight: t.font.weight.bold,
+            letterSpacing: "0.10em",
+            textTransform: "uppercase",
+            color: t.colors.navy,
+            marginBottom: 2,
+          }}
+        >
+          {caption}
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+        {Array.from({ length: total }, (_, i) => {
+          const dotP = spring({
+            frame: frame - (startFrame + i * perDot),
+            fps,
+            config: { damping: 180, mass: 0.5 },
+          });
+          const isFilled = i < filled;
+          const scale = interpolate(dotP, [0, 1], [0.3, 1]);
+          const opacity = interpolate(dotP, [0, 1], [0, 1]);
+          return (
+            <span
+              key={i}
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: 999,
+                background: isFilled ? fillColor : t.colors.bgCardGrayBorder,
+                border: isFilled ? "none" : `1px solid ${t.colors.bgCardGrayBorder}`,
+                display: "inline-block",
+                opacity,
+                transform: `scale(${scale})`,
+                boxShadow: isFilled ? `0 1px 3px ${fillColor}44` : "none",
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
   );
 };

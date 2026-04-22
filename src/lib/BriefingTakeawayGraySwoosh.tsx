@@ -86,7 +86,6 @@ export const BriefingTakeawayGraySwoosh: React.FC<{
             fontWeight: t.font.weight.bold,
             color: t.colors.white,
             lineHeight: 1.05,
-            textShadow: "0 3px 12px rgba(0,0,0,0.35)",
             ...lineIn(titleP, { fromY: 28 }),
           }}
         >

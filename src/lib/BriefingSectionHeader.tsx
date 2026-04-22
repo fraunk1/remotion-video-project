@@ -78,7 +78,6 @@ export const BriefingSectionHeader: React.FC<{
             fontWeight: theme.font.weight.bold,
             color: theme.colors.white,
             lineHeight: 1.05,
-            textShadow: "0 3px 12px rgba(0,0,0,0.35)",
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
             maxWidth: "18em",

@@ -172,22 +172,53 @@ export const BriefingTitle: React.FC<{
           <div
             style={{
               fontFamily: theme.font.family,
-              fontSize: 26,
-              color: theme.colors.textDim,
-              letterSpacing: "0.08em",
-              lineHeight: 1.8,
-              marginTop: 48,
+              marginTop: 44,
               ...line(metaProgress, 16),
             }}
           >
             {presenter && (
-              <div style={{ fontWeight: theme.font.weight.medium, color: theme.colors.text }}>
+              <div
+                style={{
+                  fontSize: 34,
+                  fontWeight: theme.font.weight.semibold,
+                  color: theme.colors.navy,
+                  letterSpacing: "0.01em",
+                  lineHeight: 1.2,
+                }}
+              >
                 {presenter}
               </div>
             )}
-            {presenterRole && <div>{presenterRole}</div>}
+            {presenterRole && (
+              <div
+                style={{
+                  fontSize: 20,
+                  fontWeight: theme.font.weight.regular,
+                  color: theme.colors.textDim,
+                  letterSpacing: "0.08em",
+                  marginTop: 6,
+                  textTransform: "uppercase",
+                }}
+              >
+                {presenterRole}
+              </div>
+            )}
             {caseCite && (
-              <div style={{ marginTop: 10, opacity: 0.85 }}>{caseCite}</div>
+              <div
+                style={{
+                  fontSize: 18,
+                  color: theme.colors.textDim,
+                  letterSpacing: "0.06em",
+                  marginTop: 18,
+                  paddingTop: 14,
+                  borderTop: `1px solid ${theme.colors.bgCardGrayBorder}`,
+                  maxWidth: "22em",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              >
+                {caseCite}
+              </div>
             )}
           </div>
         )}
