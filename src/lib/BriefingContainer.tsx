@@ -148,7 +148,7 @@ export const BriefingContainer: React.FC<{
             width: 220,
             height: "auto",
             opacity: 0.92,
-            zIndex: 0,
+            zIndex: 2,
           }}
         />
       )}

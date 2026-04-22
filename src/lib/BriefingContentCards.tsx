@@ -70,7 +70,8 @@ const ThumbnailCard: React.FC<{
   fps: number;
   delay: number;
   assetRoot?: string;
-}> = ({ card, accent, frame, fps, delay, assetRoot = "aimsa-bg" }) => {
+  gridColumnStart?: number;
+}> = ({ card, accent, frame, fps, delay, assetRoot = "aimsa-bg", gridColumnStart }) => {
   const t = fsmbTheme;
   const p = spring({ frame: frame - delay, fps, config: { damping: 180 } });
   const enter = {
@@ -84,6 +85,7 @@ const ThumbnailCard: React.FC<{
   return (
     <div
       style={{
+        gridColumnStart,
         background: t.colors.bgCardGray,
         border: `2px solid ${t.colors.bgCardGrayBorder}`,
         borderTop: `6px solid ${accent}`,
@@ -184,13 +186,15 @@ const BulletCard: React.FC<{
   frame: number;
   fps: number;
   delay: number;
-}> = ({ card, accent, frame, fps, delay }) => {
+  gridColumnStart?: number;
+}> = ({ card, accent, frame, fps, delay, gridColumnStart }) => {
   const t = fsmbTheme;
   const panelP = spring({ frame: frame - delay, fps, config: { damping: 180 } });
   const bullets = card.bullets ?? [];
   return (
     <div
       style={{
+        gridColumnStart,
         background: t.colors.bgCardGray,
         border: `2px solid ${t.colors.bgCardGrayBorder}`,
         borderTop: `6px solid ${accent}`,
@@ -339,43 +343,57 @@ export const BriefingContentCards: React.FC<{ slide: Slide }> = ({ slide }) => {
         </div>
       )}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${columns}, 1fr)`,
-          gap: 24,
-          marginTop: 32,
-          flex: 1,
-          minHeight: 0,
-        }}
-      >
-        {cards.map((card, i) => {
-          const accent = resolveAccent(card.accent);
-          // Thumbnail mode when card has a thumbnail field; bullet mode otherwise.
-          if (card.thumbnail) {
-            return (
-              <ThumbnailCard
-                key={i}
-                card={card}
-                accent={accent}
-                frame={frame}
-                fps={fps}
-                delay={10 + i * 12}
-              />
-            );
-          }
-          return (
-            <BulletCard
-              key={i}
-              card={card}
-              accent={accent}
-              frame={frame}
-              fps={fps}
-              delay={16 + i * 8}
-            />
-          );
-        })}
-      </div>
+      {(() => {
+        // Logo clearance (DESIGN_GUIDELINES §4): when cards wrap to a partial
+        // last row, shift that row's first card right by one column so it
+        // doesn't land on top of the bottom-left FSMB logo. Matches the
+        // pattern used in BriefingSourcesGrid.
+        const cardsInLastRow = cards.length % columns;
+        const needsLogoClearance = cardsInLastRow > 0 && cards.length > columns;
+        const lastRowFirstIdx = cards.length - cardsInLastRow;
+        return (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${columns}, 1fr)`,
+              gap: 24,
+              marginTop: 32,
+              flex: 1,
+              minHeight: 0,
+            }}
+          >
+            {cards.map((card, i) => {
+              const accent = resolveAccent(card.accent);
+              const gridColumnStart =
+                needsLogoClearance && i === lastRowFirstIdx ? 2 : undefined;
+              if (card.thumbnail) {
+                return (
+                  <ThumbnailCard
+                    key={i}
+                    card={card}
+                    accent={accent}
+                    frame={frame}
+                    fps={fps}
+                    delay={10 + i * 12}
+                    gridColumnStart={gridColumnStart}
+                  />
+                );
+              }
+              return (
+                <BulletCard
+                  key={i}
+                  card={card}
+                  accent={accent}
+                  frame={frame}
+                  fps={fps}
+                  delay={16 + i * 8}
+                  gridColumnStart={gridColumnStart}
+                />
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {callout && (
         <div
